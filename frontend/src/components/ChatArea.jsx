@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 const AGENT_LABELS = {
     general: { label: 'General', icon: '⚡' },
@@ -23,12 +24,12 @@ const TICKER_ITEMS = [
 function formatContent(content) {
     if (!content) return '';
     // Basic markdown-ish rendering
-    return content
+    const html = content
         .split('\n')
-        .map((line, i) => {
+        .map((line) => {
             // Headers
-            if (line.startsWith('### ')) return `<h4 key="${i}" style="margin:8px 0 4px;font-family:var(--font-display);font-size:var(--fs-sm)">${line.slice(4)}</h4>`;
-            if (line.startsWith('## ')) return `<h3 key="${i}" style="margin:10px 0 4px;font-family:var(--font-display);font-size:var(--fs-base)">${line.slice(3)}</h3>`;
+            if (line.startsWith('### ')) return `<h4 class="msg-h4">${line.slice(4)}</h4>`;
+            if (line.startsWith('## ')) return `<h3 class="msg-h3">${line.slice(3)}</h3>`;
             // Bold
             line = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
             // Italic
@@ -36,15 +37,21 @@ function formatContent(content) {
             // Inline code
             line = line.replace(/`(.+?)`/g, '<code>$1</code>');
             // Blockquote
-            if (line.startsWith('> ')) return `<blockquote style="border-left:3px solid var(--green-subtle);padding:4px 12px;margin:4px 0;color:var(--text-dim);font-style:italic">${line.slice(2)}</blockquote>`;
+            if (line.startsWith('> ')) return `<blockquote class="msg-quote">${line.slice(2)}</blockquote>`;
             // List items
-            if (/^\d+\.\s/.test(line)) return `<div style="padding-left:12px;margin:2px 0">• ${line.replace(/^\d+\.\s/, '')}</div>`;
-            if (line.startsWith('- ')) return `<div style="padding-left:12px;margin:2px 0">• ${line.slice(2)}</div>`;
+            if (/^\d+\.\s/.test(line)) return `<div class="msg-list-item">• ${line.replace(/^\d+\.\s/, '')}</div>`;
+            if (line.startsWith('- ')) return `<div class="msg-list-item">• ${line.slice(2)}</div>`;
             // Empty lines
             if (!line.trim()) return '<br/>';
             return `<p>${line}</p>`;
         })
         .join('');
+
+    return DOMPurify.sanitize(html, {
+        ADD_ATTR: ['class'],
+        FORBID_TAGS: ['style'],
+        FORBID_ATTR: ['style']
+    });
 }
 
 export default function ChatArea({

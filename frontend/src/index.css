@@ -1293,3 +1293,26 @@ input, textarea, select {
     padding: var(--space-lg);
   }
 }
+
+/* Generated Content Styles */
+.msg-h3 {
+  margin: 10px 0 4px;
+  font-family: var(--font-display);
+  font-size: var(--fs-base);
+}
+.msg-h4 {
+  margin: 8px 0 4px;
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+}
+.msg-quote {
+  border-left: 3px solid var(--green-subtle);
+  padding: 4px 12px;
+  margin: 4px 0;
+  color: var(--text-dim);
+  font-style: italic;
+}
+.msg-list-item {
+  padding-left: 12px;
+  margin: 2px 0;
+}
